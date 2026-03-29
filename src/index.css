@@ -1,0 +1,345 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Global Reset ─── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #080810;
+  color: #c8ffd4;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  user-select: none;
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ─── CRT Scanlines Overlay ─── */
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.08) 2px,
+    rgba(0, 0, 0, 0.08) 4px
+  );
+}
+
+/* Subtle vignette */
+.crt-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.5) 100%);
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #0d1117; }
+::-webkit-scrollbar-thumb { background: #00ff8840; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #00ff8880; }
+
+/* ─── Selection ─── */
+::selection { background: #00ff8830; color: #00ff88; }
+
+/* ─── Glow Effects ─── */
+.glow-green { text-shadow: 0 0 10px #00ff88, 0 0 20px #00ff8840; }
+.glow-cyan  { text-shadow: 0 0 10px #00d4ff, 0 0 20px #00d4ff40; }
+.glow-pink  { text-shadow: 0 0 10px #f72585, 0 0 20px #f7258540; }
+.glow-purple { text-shadow: 0 0 10px #a855f7, 0 0 20px #a855f740; }
+
+.box-glow-green { box-shadow: 0 0 0 1px #00ff8830, 0 0 20px #00ff8815; }
+.box-glow-cyan  { box-shadow: 0 0 0 1px #00d4ff30, 0 0 20px #00d4ff15; }
+.box-glow-purple { box-shadow: 0 0 0 1px #a855f730, 0 0 20px #a855f715; }
+
+/* ─── Window ─── */
+.os-window {
+  position: absolute;
+  background: rgba(13, 17, 23, 0.96);
+  border: 1px solid #00ff8825;
+  border-radius: 8px;
+  backdrop-filter: blur(12px);
+  box-shadow:
+    0 0 0 1px #00ff8812,
+    0 25px 60px rgba(0,0,0,0.8),
+    0 0 40px #00ff8808;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.os-window.focused {
+  border-color: #00ff8840;
+  box-shadow:
+    0 0 0 1px #00ff8830,
+    0 30px 80px rgba(0,0,0,0.9),
+    0 0 60px #00ff8812;
+}
+
+.window-titlebar {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  background: rgba(0, 255, 136, 0.04);
+  border-bottom: 1px solid #00ff8815;
+  cursor: grab;
+  flex-shrink: 0;
+  gap: 8px;
+}
+
+.window-titlebar:active { cursor: grabbing; }
+
+.window-controls {
+  display: flex;
+  gap: 7px;
+  margin-right: 8px;
+}
+
+.win-btn {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: filter 0.15s;
+  position: relative;
+}
+
+.win-btn:hover { filter: brightness(1.3); }
+.win-btn.close { background: #ff5f57; }
+.win-btn.minimize { background: #ffbd2e; }
+.win-btn.maximize { background: #27c93f; }
+
+.window-content {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+}
+
+/* ─── Terminal ─── */
+.terminal-output {
+  padding: 12px;
+  font-size: 13px;
+  line-height: 1.6;
+  min-height: 100%;
+}
+
+.terminal-line { margin-bottom: 2px; white-space: pre-wrap; word-break: break-all; }
+.terminal-prompt { color: #00ff88; }
+.terminal-input-line { display: flex; align-items: center; gap: 6px; padding: 4px 12px 12px; }
+.terminal-cursor {
+  display: inline-block;
+  width: 9px;
+  height: 16px;
+  background: #00ff88;
+  animation: blink 1s step-end infinite;
+  vertical-align: text-bottom;
+}
+
+/* ─── Progress / XP Bar ─── */
+.xp-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00ff88, #00d4ff);
+  border-radius: 4px;
+  transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.xp-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -60%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -60%; }
+  100% { left: 120%; }
+}
+
+/* ─── Desktop Icon ─── */
+.desktop-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+  width: 88px;
+  text-align: center;
+}
+
+.desktop-icon:hover { background: rgba(0,255,136,0.08); }
+.desktop-icon:active { background: rgba(0,255,136,0.15); }
+.desktop-icon.selected { background: rgba(0,255,136,0.12); outline: 1px solid #00ff8840; }
+
+.icon-emoji {
+  font-size: 36px;
+  filter: drop-shadow(0 0 8px rgba(0,255,136,0.3));
+  transition: filter 0.2s, transform 0.2s;
+}
+
+.desktop-icon:hover .icon-emoji {
+  filter: drop-shadow(0 0 14px rgba(0,255,136,0.6));
+  transform: scale(1.08);
+}
+
+/* ─── Achievement Toast ─── */
+.achievement-toast {
+  background: rgba(13, 17, 23, 0.97);
+  border: 1px solid #ffd60a40;
+  border-left: 3px solid #ffd60a;
+  box-shadow: 0 0 20px #ffd60a20, 0 10px 40px rgba(0,0,0,0.5);
+  border-radius: 8px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 300px;
+  max-width: 380px;
+}
+
+/* ─── Skill Bar ─── */
+.skill-bar-fill {
+  height: 6px;
+  border-radius: 3px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ─── Boot Sequence ─── */
+.boot-screen {
+  background: #080810;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ─── Matrix Rain Canvas ─── */
+.matrix-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 8888;
+  opacity: 0.85;
+}
+
+/* ─── Scrollable content areas ─── */
+.scroll-area {
+  overflow-y: auto;
+  height: 100%;
+  padding: 20px;
+}
+
+/* ─── Taskbar ─── */
+.taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  background: rgba(8, 8, 16, 0.95);
+  border-top: 1px solid #00ff8820;
+  backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 8px;
+  z-index: 1000;
+}
+
+/* ─── Glitch text ─── */
+.glitch-text {
+  animation: glitch 4s ease-in-out infinite;
+}
+
+/* ─── Blinking cursor ─── */
+.blink { animation: blink 1s step-end infinite; }
+
+/* ─── User-selectable in windows ─── */
+.os-window .window-content {
+  user-select: text;
+}
+
+/* ─── Project card ─── */
+.project-card {
+  border: 1px solid #00ff8815;
+  border-radius: 8px;
+  padding: 16px;
+  background: rgba(0,255,136,0.03);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.project-card:hover {
+  border-color: #00ff8840;
+  background: rgba(0,255,136,0.06);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 20px rgba(0,255,136,0.08);
+}
+
+/* ─── Timeline ─── */
+.timeline-item {
+  position: relative;
+  padding-left: 24px;
+  padding-bottom: 32px;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 20px;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(180deg, #00ff8840 0%, transparent 100%);
+}
+
+.timeline-item:last-child::before { display: none; }
+
+.timeline-dot {
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 2px solid #00ff88;
+  background: #080810;
+  box-shadow: 0 0 8px #00ff8860;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  .os-window {
+    width: 95vw !important;
+    left: 2.5vw !important;
+    max-height: 70vh;
+  }
+  .desktop-icon { width: 72px; }
+  .icon-emoji { font-size: 28px; }
+  body { overflow: hidden; }
+}
