@@ -2,10 +2,10 @@
 // Edit this file to customize all portfolio content.
 
 export const PROFILE = {
-  name: 'Fikhri',
-  title: 'Senior Software Engineer',
+  name: 'Irfan Fikhri Bin Iszahar',
+  title: 'Senior Analyst Developer',
   tagline: 'Building systems that scale, experiences that last.',
-  location: 'Remote · Earth',
+  location: 'Selangor · Malaysia',
   avatar: '👨‍💻',
   bio: `I architect and ship production systems at scale. With 7+ years of
 experience across the full stack, I've led teams, launched products used
